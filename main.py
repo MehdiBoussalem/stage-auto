@@ -14,13 +14,14 @@ def fetch_company_names(naf, department, pages=10):
             nom = company['nom_complet']
             code = company['matching_etablissements'][0]['code_postal']
             nature = company['nature_juridique']
+            siren = company['siren']
             if int(nature) != 1000:
                 try:
                     dirigent = company['dirigeants'][0]['nom'] + ' ' + company['dirigeants'][0]['prenoms']
-                    data.append([nom, code, dirigent, nature])
+                    data.append([nom,siren ,code, dirigent,naf])
                 except:
                     pass
-    df = pd.DataFrame(data, columns=['Entreprise', 'Code Postal', 'Dirigeant', 'Nature Juridique'])
+    df = pd.DataFrame(data, columns=['Entreprise','Siren' ,'Code Postal', 'Dirigeant', 'NAF'])
     return df
 
 def delete_double(df):
@@ -67,7 +68,35 @@ def add_linkedin(df):
     print(f'Linkedin urls found: {len(linkedin_urls)}')
     df['Linkedin'] = linkedin_urls
     return df
+def add_company_description(df):
+    descriptions = []
+    total = len(df)
+    # Création d'une seule instance DDGS pour toutes les requêtes
+    ddgs = DDGS()
 
+    for index, row in df.iterrows():
+        query = f"{row['Entreprise']} description"
+        description_text = ""
+        try:
+            results = ddgs.text(keywords=query, max_results=1, region='fr-FR')
+            if results:
+                # Récupérer le champ 'body' qui contient souvent le résumé ou la description
+                description_text = results[0].get('body', '')
+        except Exception as e:
+            print(f"[{index+1}/{total}] Erreur pour la requête '{query}': {e}. Attente de 60 secondes...")
+            time.sleep(60)
+            try:
+                results = ddgs.text(keywords=query, max_results=1)
+                if results:
+                    description_text = results[0].get('body', '')
+            except Exception as e:
+                print(f"[{index+1}/{total}] Nouvelle erreur pour la requête '{query}': {e}. Passage à la suivante.")
+        
+        descriptions.append(description_text)
+        print(f"[{index+1}/{total}] Description traitée pour : {row['Entreprise']}")
+
+    df['Description'] = descriptions
+    return df
 if __name__ == '__main__':
     print('Start')
     # Example usage
@@ -84,6 +113,8 @@ if __name__ == '__main__':
     print('Number of companies:', len(df_companies))
     print('adding linkedin urls')
     df_companies = add_linkedin(df_companies)
+    print('adding company descriptions')
+    df_companies = add_company_description(df_companies)
     print('saving to companies.csv')
     df_companies.to_csv('companies.csv', index=False)
     print('End')
