@@ -1,0 +1,15 @@
+Fonction generate_lm : 
+    entré :
+        cv : fichier 
+        entreprise : string
+        code_postal : string 
+        domaine : string 
+        description : string
+    sortie : 
+        lm : fichier 
+    
+    Début: 
+        genere une lettre de motivation avec les parametres en entrées grace a l'api de ollama
+    Fin 
+    
+         
