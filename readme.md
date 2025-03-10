@@ -1,4 +1,5 @@
-# Projet d'Intégration et Génération de Lettres de Motivation pour Entreprises
+# TP - IA et stratégie de données : automatiser sa recherche de stage
+
 
 Ce projet est une solution automatisée qui permet de :
 
