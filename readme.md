@@ -125,10 +125,14 @@ Remplacez les valeurs par vos identifiants Notion.
 
 **Base de données**
 ![Base de données](images/bdd.png)
+
 **Dashboard**
 ![Dashboard-1](images/dashboard-1.png)
 ![Dashboard-2](images/dashboard-2.png)
 ![Dashboard-3](images/dashboard-3.png)
+
+**Lettre Motivation**
+![LM](images/LM.png)
 
 # Auteurs
 
